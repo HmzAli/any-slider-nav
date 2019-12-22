@@ -1,6 +1,8 @@
 import * as $ from 'jquery';
 import 'slick-carousel';
 
+let sliderAdapters = {};
+
 /**
  * NOTE: slider object should be a singleton so that multiple navs can subscribe to it
  */
@@ -52,7 +54,12 @@ export class SliderAdapter {
         this.$slider.slick('slickGoTo', activeControl.index);
     }
 
-    static create(selector, library) {
+    static getOrCreate(selector, library) {
+        if (!!sliderAdapters[selector]) {
+            console.log('slider adapter already exists, returning it.')
+            return sliderAdapters[selector]
+        }
+
         if (library == 'slick') {
             let $slick = $(selector);
             let slickObject = $slick.slick('getSlick');
@@ -61,6 +68,7 @@ export class SliderAdapter {
             $slick.on('afterChange', (event, slick) => {
                 sliderAdapter.update(slick.currentSlide, slick.slideCount);
             });
+            sliderAdapters[selector] = sliderAdapter;
             return sliderAdapter;
         }
 

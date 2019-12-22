@@ -13,7 +13,7 @@ export class SliderNav {
 
         this.library = library;
         this.$element = $element;
-        this.sliderAdapter = SliderAdapter.create(selector, this.library);
+        this.sliderAdapter = SliderAdapter.getOrCreate(selector, this.library);
         this.sliderAdapter.addObserver(this);
         this.createControls();
     }
