@@ -1,4 +1,4 @@
-import { Slider } from "./slider";
+import { SliderAdapter } from "./slider-adapter";
 import { SliderControl } from "./slider-control";
 
 /**
@@ -6,41 +6,36 @@ import { SliderControl } from "./slider-control";
  */
 
 export class SliderNav {
-    constructor (selector, sliderSelector) {
-        if (!!this.getElement(selector)) {
-            throw new Error(`Unable to instantiate SliderNav. ${selector} is not found.`);
+    constructor ($element, selector, library) {
+        if (!$element) {
+            throw new Error(`Unable to instantiate SliderNav. Nav element not found.`);
         }
+
+        this.library = library;
+        this.$element = $element;
+        this.sliderAdapter = SliderAdapter.create(selector, this.library);
+        this.sliderAdapter.addObserver(this);
         this.createControls();
-        this.createSlider(sliderSelector);
-    }
-
-    getElement(selector) {
-        this._$element = document.querySelector(selector);
-        return !!this._$element;
-    }
-
-    createSlider(selector) {
-        /**
-         * Creates an object that represents the target slider, then observe it for any updates
-         */
-        this.slider = Slider.create(this, selector, 'slick');
-        this.slider.addObserver(this);
     }
 
     createControls() {
-        for (let i = 0; i <= this.slider.totalSlides; i++) {
+        this.controls = [];
+
+        for (let i = 0; i < this.sliderAdapter.totalSlides; i++) {
             let control = SliderControl.create(i);
+            control.addObserver(this.sliderAdapter);
             this.controls.push(control);
-            this._$element.appendChild(control._$element);
+            this.$element.appendChild(control.$element);
         }
+
+        this.update(this.sliderAdapter);
     }
 
-    update(slider) {
-        /**
-         * Notify controls of slider updates
-         */
-        this.slider = slider;
-
-        this.controls.forEach(control => control.update(slider));
+    /**
+     * Notify controls of slider updates
+     */
+    update(sliderAdapter) {
+        this.sliderAdapter = sliderAdapter;
+        this.controls.forEach(control => control.update(sliderAdapter));
     }
 }
