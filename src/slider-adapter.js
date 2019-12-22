@@ -1,12 +1,36 @@
 import * as $ from 'jquery';
 import 'slick-carousel';
 
-let sliderAdapters = {};
+class Slider {
+    constructor(selector, library, adapter) {
+        this.selector = selector;
+        this.library = library;
+        this.adapter = adapter;
+    }
+}
+
+class SliderManager {
+    constructor () {
+        this.sliders = [];
+    }
+
+    add(selector, library, adapter) {
+        this.sliders.push(new Slider(selector, library, adapter))
+    }
+
+    getAdapter(selector, library) {
+        let slider = this.sliders.find(slider => slider.selector == selector && slider.library == library);
+
+        if (!!slider) {
+            return slider.adapter;
+        }
+        return null;
+    }
+}
 
 /**
  * NOTE: slider object should be a singleton so that multiple navs can subscribe to it
  */
-
 export class SliderAdapter {
     constructor ($slider, currentSlide, totalSlides) {
         this.$slider = $slider;
@@ -55,9 +79,10 @@ export class SliderAdapter {
     }
 
     static getOrCreate(selector, library) {
-        if (!!sliderAdapters[selector]) {
-            console.log('slider adapter already exists, returning it.')
-            return sliderAdapters[selector]
+        let existingAdapter = sliderManager.getAdapter(selector, library);
+        if (!!existingAdapter) {
+            console.log(`An adapter already exists for selector ${selector} - ${library}, returning it.`)
+            return existingAdapter;
         }
 
         if (library == 'slick') {
@@ -68,10 +93,13 @@ export class SliderAdapter {
             $slick.on('afterChange', (event, slick) => {
                 sliderAdapter.update(slick.currentSlide, slick.slideCount);
             });
-            sliderAdapters[selector] = sliderAdapter;
+
+            sliderManager.add(selector, library, sliderAdapter);
             return sliderAdapter;
         }
 
         throw new Error(`Library ${library} not supported`);
     }
 }
+
+let sliderManager = new SliderManager();
