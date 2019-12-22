@@ -90,8 +90,8 @@ export class SliderAdapter {
             let slickObject = $slick.slick('getSlick');
             let sliderAdapter = new SliderAdapter($slick, slickObject.currentSlide, slickObject.slideCount);
 
-            $slick.on('afterChange', (event, slick) => {
-                sliderAdapter.update(slick.currentSlide, slick.slideCount);
+            $slick.on('beforeChange', (event, slick, currentSlide, nextSlide) => {
+                sliderAdapter.update(nextSlide, slick.slideCount);
             });
 
             sliderManager.add(selector, library, sliderAdapter);
