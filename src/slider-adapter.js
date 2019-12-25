@@ -1,30 +1,15 @@
 import * as $ from 'jquery';
 import 'slick-carousel';
+import { SliderManager } from './helpers';
 
-class Slider {
-    constructor(selector, library, adapter) {
-        this.selector = selector;
-        this.library = library;
-        this.adapter = adapter;
-    }
-}
-
-class SliderManager {
-    constructor () {
-        this.sliders = [];
-    }
-
-    add(selector, library, adapter) {
-        this.sliders.push(new Slider(selector, library, adapter))
-    }
-
-    getAdapter(selector, library) {
-        let slider = this.sliders.find(slider => slider.selector == selector && slider.library == library);
-
-        if (!!slider) {
-            return slider.adapter;
-        }
-        return null;
+/**
+ * Represents slider configurations
+ */
+class SliderConfig {
+    constructor(totalSlides, slidesToShow, slidesToScroll) {
+        this.totalSlides = totalSlides;
+        this.slidesToShow = slidesToShow;
+        this.slidesToScroll = slidesToScroll;
     }
 }
 
@@ -32,66 +17,71 @@ class SliderManager {
  * NOTE: slider object should be a singleton so that multiple navs can subscribe to it
  */
 export class SliderAdapter {
-    constructor ($slider, currentSlide, totalSlides) {
+    constructor ($slider, currentSlide, sliderConfig) {
         this.$slider = $slider;
-        this._currentSlide = currentSlide;
-        this._totalSlides = totalSlides;
+        this.currentSlide = currentSlide;
+        this.sliderConfig = sliderConfig;
         this.observers = [];
     }
 
-    set currentSlide(slide) {
-        this._currentSlide = slide;
-    }
-
-    set totalSlides(total) {
-        this._totalSlides = total;
-    }
-
-    get currentSlide() {
-        return this._currentSlide;
-    }
-
-    get totalSlides() {
-        return this._totalSlides;
-    }
-
+    /**
+     *
+     * @param {object} observer an object subscribed to any event
+     */
     addObserver(observer) {
         this.observers.push(observer);
     }
 
-    removeObserver(observer) {
-        // removing the observer here, TODO: look into creating observer interface
-    }
-
-    update(currentSlide, totalSlides) {
-        this._currentSlide = currentSlide;
-        this._totalSlides = totalSlides;
-
+    /**
+     *
+     * @param {number} currentSlide
+     *
+     * Notify all observers of the current slider state
+     */
+    update(currentSlide) {
+        this.currentSlide = currentSlide;
         this.observers.forEach(observer => observer.update(this));
     }
 
     /**
      *
-     * This method calls the slick slider API to update its state based on this slider
+     * Calls the slider API to update its state based on the params
      */
-    updateSlider(activeControl) {
-        this.$slider.slick('slickGoTo', activeControl.index);
+    updateSlider(nextSlide) {
+        this.$slider.slick('slickGoTo', nextSlide);
     }
 
-    static getOrCreate(selector, library) {
+    /**
+     *
+     * Creates an adapter that implements SliderAdapter interface
+     *
+     * @param {NavConfig}
+     */
+    static getOrCreate(navConfig) {
+        const selector = navConfig.sliderSelector;
+        const library = navConfig.library;
         let existingAdapter = sliderManager.getAdapter(selector, library);
         if (!!existingAdapter) {
-            console.log(`An adapter already exists for selector ${selector} - ${library}, returning it.`)
             return existingAdapter;
         }
 
         if (library == 'slick') {
             let $slick = $(selector);
             let slickObject = $slick.slick('getSlick');
-            let sliderAdapter = new SliderAdapter($slick, slickObject.currentSlide, slickObject.slideCount);
+            let sliderConfig = new SliderConfig(
+                slickObject.slideCount,
+                slickObject.options.slidesToShow,
+                slickObject.options.slidesToScroll
+            );
+
+            let sliderAdapter = new SliderAdapter(
+                $slick,
+                slickObject.currentSlide,
+                sliderConfig
+            );
 
             $slick.on('beforeChange', (event, slick, currentSlide, nextSlide) => {
-                sliderAdapter.update(nextSlide, slick.slideCount);
+                sliderAdapter.update(nextSlide);
             });
 
             sliderManager.add(selector, library, sliderAdapter);
@@ -102,4 +92,4 @@ export class SliderAdapter {
     }
 }
 
-let sliderManager = new SliderManager();
+let sliderManager = new SliderManager(); // TODO: This doesn't belong here

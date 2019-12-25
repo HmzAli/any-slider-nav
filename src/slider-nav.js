@@ -1,41 +1,42 @@
-import { SliderAdapter } from "./slider-adapter";
-import { SliderControl } from "./slider-control";
+import { SliderAdapter } from './slider-adapter';
+import createControls from './controls/control-factory';
 
 /**
- * Slider controls observe slider navs, and slider navs observe sliders (or the wrappers for the actual slides)
+ * @class Represents a slider navigation element
+ *
+ * This class does the following:
+ *
+ * - Binds itself to the element (to be) used as a nav for the slider
+ * - Requests for a new (or existing) slider adapter based on the specified selector and library
+ * - Add controls (of the specified config) to its element
+ * - Make the adapter and each control observe each other for changes: SliderAdapter <-> SliderControl
+ * - Notify controls of the initial adapter state (since controls belong to the nav, they are observers of it by default)
+ *
+ * @constructor
+ * @param {HTMLElement} $element the element used as a nav
+ * @param {NavConfig} navConfig
+ *
  */
-
 export class SliderNav {
-    constructor ($element, selector, library) {
-        if (!$element) {
-            throw new Error(`Unable to instantiate SliderNav. Nav element not found.`);
-        }
-
-        this.library = library;
+    constructor ($element, navConfig) {
+        this.navConfig = navConfig;
         this.$element = $element;
-        this.sliderAdapter = SliderAdapter.getOrCreate(selector, this.library);
-        this.sliderAdapter.addObserver(this);
-        this.createControls();
+        this.sliderAdapter = SliderAdapter.getOrCreate(navConfig);
+        this.addControls();
     }
 
-    createControls() {
-        this.controls = [];
-
-        for (let i = 0; i < this.sliderAdapter.totalSlides; i++) {
-            let control = SliderControl.create(i);
+    addControls() {
+        this.controls = [].concat(createControls(this.navConfig.type, this.sliderAdapter.sliderConfig));
+        this.controls.forEach(control => {
             control.addObserver(this.sliderAdapter);
-            this.controls.push(control);
+            this.sliderAdapter.addObserver(control);
             this.$element.appendChild(control.$element);
-        }
+        });
 
-        this.update(this.sliderAdapter);
+        this.initControls();
     }
 
-    /**
-     * Notify controls of slider updates
-     */
-    update(sliderAdapter) {
-        this.sliderAdapter = sliderAdapter;
-        this.controls.forEach(control => control.update(sliderAdapter));
+    initControls() {
+        this.controls.forEach(control => control.update(this.sliderAdapter));
     }
 }

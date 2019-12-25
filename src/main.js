@@ -1,21 +1,25 @@
 import * as $ from 'jquery';
-import 'slick-carousel';
+import AnySliderNav from './asn';
 
-import { SliderNav } from './slider-nav';
+/**
+ * 1. The main module should be instantiated ONCE only
+ * 2. The number of controls created by the SliderNav should be based on slider's config, not just the total number of slides
+ *    For slick adapter, use this formula: Math.ceil(slideCount / slidesToShow)
+ * 3. Adapter's logic needs refactoring
+ */
 
 $(document).ready(() => {
-    $('.slider').slick({
+    $('.slick-slider-1').slick({
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: false,
+    });
+
+    $('.slick-slider-2').slick({
         slidesToShow: 2,
         slidesToScroll: 2,
         arrows: false,
     });
 
-    let nav1 = document.querySelectorAll('[data-sn-slider]')[0];
-    let nav2 = document.querySelectorAll('[data-sn-slider]')[1];
-
-    new SliderNav(nav1, '.slick-slider-1', 'slick');
-    new SliderNav(nav2, '.slick-slider-2', 'slick');
+    new AnySliderNav();
 });
-
-
-// document.querySelectorAll('[data-sn-slider]');
