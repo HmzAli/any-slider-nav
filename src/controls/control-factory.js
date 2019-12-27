@@ -1,6 +1,6 @@
 import { error } from '../utils';
 
-import { DotSliderControl } from './dot-slider-control';
+import { DotSliderControl } from './slider-control';
 
 /**
  * Creates one to many slider controls based on type and slider config
@@ -9,16 +9,18 @@ import { DotSliderControl } from './dot-slider-control';
  * @param {SliderConfig} sliderConfig object representing the slider's current configurations
  * @return {Array} A list of controllers of type
  */
-export default (type, sliderConfig) => {
-    let controls = [];
-
-    if (!type) {
+export default (navConfig, sliderConfig) => {
+    const types = ['arrow', 'dots'];
+    let type = navConfig.type;
+    if (!types.find(t => t == type)) {
         error(`${type} is not a valid control type`);
     }
 
     if (!sliderConfig) {
-        error(`No slider config given. A config is required to properly create controls`);
+        error(`No slider config given. A config is required to create controls`);
     }
+
+    let controls = [];
 
     if (type == 'dots') {
         const totalSlides = sliderConfig.totalSlides;
@@ -30,7 +32,7 @@ export default (type, sliderConfig) => {
 
         const totalDots = Math.ceil(totalSlides / slidesToScroll);
         for (let i = 0; i < totalDots; i++) {
-            controls.push(new DotSliderControl(i, slidesToSkip));
+            controls.push(new DotSliderControl(navConfig, i, slidesToSkip));
         }
     }
 

@@ -12,7 +12,7 @@
     border: 1px solid #ccc;
     padding: 10px;
     width: 300px;
-    height: 300px;
+    height: 200px;
     background: #eee;
 }
 
@@ -36,4 +36,8 @@
 
 .slider-nav .sn-dot.active {
     opacity: 1;
+}
+
+.slider-nav .pretty {
+    background: gold;
 }

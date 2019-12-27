@@ -4,14 +4,15 @@ import { SliderNav } from './slider-nav';
 
 class NavConfig {
     constructor($nav) {
-        this.slider = null; // Required
+        this.slider = ''; // Required
         this.type = 'dots';
-        this.library = null;  // Required
-        this.$slider = null;
+        this.library = '';  // Required
+        this.class = '';
+        this.$slider = '';
 
         NavConfig.attributeNames.forEach(attribute => {
             let key = attribute.split('-').pop();
-            let value = $nav.getAttribute(attribute) || null;
+            let value = $nav.getAttribute(attribute) || '';
             this[key] = value;
         });
 
@@ -38,7 +39,8 @@ class NavConfig {
         return [
             'data-asn-slider',
             'data-asn-type',
-            'data-asn-library'
+            'data-asn-library',
+            'data-asn-class',
         ];
     }
 }
@@ -49,5 +51,12 @@ export default class AnySliderNav {
             .forEach($nav => {
                 new SliderNav($nav, new NavConfig($nav));
             });
+    }
+
+    static init() {
+        if (window.anySliderNav) {
+            return window.anySliderNav;
+        }
+        window.anySliderNav = new AnySliderNav();
     }
 }

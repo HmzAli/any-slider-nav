@@ -10,6 +10,7 @@ import AnySliderNav from './asn';
 
 $(document).ready(() => {
     $('.slick-slider-1').slick({
+        autoplay: true,
         slidesToShow: 1,
         slidesToScroll: 1,
         arrows: false,
@@ -21,5 +22,6 @@ $(document).ready(() => {
         arrows: false,
     });
 
-    new AnySliderNav();
+    AnySliderNav.init();
+    AnySliderNav.init();
 });

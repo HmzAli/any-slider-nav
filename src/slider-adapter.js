@@ -2,6 +2,11 @@ import * as $ from 'jquery';
 import 'slick-carousel';
 import { SliderManager } from './helpers';
 
+
+/**
+ * TODO: Create SliderAdapter and OwlAdapter, and let them handle create() and updateSlider logic
+ */
+
 /**
  * Represents slider configurations
  */
@@ -66,6 +71,10 @@ export class SliderAdapter {
         }
 
         if (library == 'slick') {
+            new SlickAdapter();
+
+
+            /*
             let $slick = $(selector);
             let slickObject = $slick.slick('getSlick');
             let sliderConfig = new SliderConfig(
@@ -85,7 +94,7 @@ export class SliderAdapter {
             });
 
             sliderManager.add(selector, library, sliderAdapter);
-            return sliderAdapter;
+            return sliderAdapter; */
         }
 
         throw new Error(`Library ${library} not supported`);

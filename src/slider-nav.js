@@ -21,12 +21,19 @@ export class SliderNav {
     constructor ($element, navConfig) {
         this.navConfig = navConfig;
         this.$element = $element;
+
+        if (navConfig.classes) {
+            this.$element.classList.add(navConfig.classes);
+        }
+
         this.sliderAdapter = SliderAdapter.getOrCreate(navConfig);
         this.addControls();
     }
 
     addControls() {
-        this.controls = [].concat(createControls(this.navConfig.type, this.sliderAdapter.sliderConfig));
+        this.controls = [].concat(
+            createControls(this.navConfig, this.sliderAdapter.sliderConfig)
+        );
         this.controls.forEach(control => {
             control.addObserver(this.sliderAdapter);
             this.sliderAdapter.addObserver(control);
