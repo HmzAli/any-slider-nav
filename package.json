@@ -1,0 +1,28 @@
+{
+  "name": "any-slider-nav",
+  "version": "0.0.1",
+  "description": "",
+  "main": "main.js",
+  "peerDependencies": {
+    "jquery": "^3.4.1",
+    "slick-carousel": "^1.8.1"
+  },
+  "devDependencies": {
+    "webpack": "^4.41.4",
+    "webpack-cli": "^3.3.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HmzAli/any-slider-nav.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HmzAli/any-slider-nav/issues"
+  },
+  "homepage": "https://github.com/HmzAli/any-slider-nav#readme"
+}

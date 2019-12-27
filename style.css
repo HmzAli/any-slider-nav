@@ -8,7 +8,7 @@
     margin-bottom: 15px;
 }
 
-.slider li {
+.slider .slick-slide {
     border: 1px solid #ccc;
     padding: 10px;
     width: 300px;

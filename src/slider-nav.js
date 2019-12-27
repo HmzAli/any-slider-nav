@@ -1,4 +1,4 @@
-import { SliderAdapter } from './slider-adapter';
+import adapterManager from './adapter-manager';
 import createControls from './controls/control-factory';
 
 /**
@@ -26,7 +26,7 @@ export class SliderNav {
             this.$element.classList.add(navConfig.classes);
         }
 
-        this.sliderAdapter = SliderAdapter.getOrCreate(navConfig);
+        this.sliderAdapter = adapterManager.getOrCreate(navConfig);
         this.addControls();
     }
 

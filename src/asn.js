@@ -9,6 +9,7 @@ class NavConfig {
         this.library = '';  // Required
         this.class = '';
         this.$slider = '';
+        this.sliderSelector = '';
 
         NavConfig.attributeNames.forEach(attribute => {
             let key = attribute.split('-').pop();

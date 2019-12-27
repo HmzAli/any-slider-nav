@@ -23,10 +23,11 @@ export default class SliderControl {
 
 
 /**
- * Represent a dot slider control of type SliderControl
+ * Represents a dot / indicator control
  *
  * @constructor
- * @param {number} index determines the dot's position in the parent element
+ * @param {NavConfig} navConfig
+ * @param {number} index determines the dot's position in the parent (nav) element
  * @param {number} indexsToSkip the number of indexes to skip before assigning the index to the dot
  */
 export class DotSliderControl extends SliderControl {
@@ -41,7 +42,6 @@ export class DotSliderControl extends SliderControl {
     }
 
     /**
-     * @param {NavConfig} navConfig
      * @param {number} index the index identifying the dot's position in the control
      * @param {number} indexsToSkip
      */
